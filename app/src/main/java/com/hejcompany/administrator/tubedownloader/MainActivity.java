@@ -183,7 +183,7 @@ public class MainActivity extends AppCompatActivity {
                 + "part=snippet&q=" + editText
                 + "&key="+ serverKey+"&maxResults=50");  //EditText에 입력된 값으로 겁색을 합니다. 공백이 없어야 검색됨
 
-// part(snippet), q(검색값) , key(서버키)
+        // part(snippet), q(검색값) , key(서버키)
         HttpClient client = new DefaultHttpClient();
         HttpResponse response;
         StringBuilder stringBuilder = new StringBuilder();

@@ -24,6 +24,7 @@ import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.File;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -41,7 +42,7 @@ public class PreviewActivity extends AppCompatActivity {
 
     String youtubeLink = "http://youtube.com/watch?v=";
 
-    // if (codec == 0), execute MP3 download     else if (codec == 1), excute MP4 download
+    // if (codec == 0), execute MP3 download     else if (codec == 1), execute MP4 download
     int codec = 0;
 
     ImageView previewImg;
@@ -234,6 +235,12 @@ public class PreviewActivity extends AppCompatActivity {
 
     // Downloading youtubeUrl
     private void downloadFromUrl(String youtubeDlUrl, String downloadTitle, String fileName) {
+        File filePath = new File(Environment.getExternalStorageDirectory() + "/Tube Downloader");
+
+        if(!filePath.exists()){
+            filePath.mkdirs();   // 폴더가 없다면 생성
+        }
+
         Uri uri = Uri.parse(youtubeDlUrl);
         DownloadManager.Request request = new DownloadManager.Request(uri);
         request.setTitle(downloadTitle);
@@ -242,7 +249,8 @@ public class PreviewActivity extends AppCompatActivity {
 
         request.allowScanningByMediaScanner();
         request.setNotificationVisibility(DownloadManager.Request.VISIBILITY_VISIBLE_NOTIFY_COMPLETED);
-        request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName);
+        //request.setDestinationInExternalPublicDir(Environment.DIRECTORY_DOWNLOADS, fileName); 원본
+        request.setDestinationInExternalPublicDir("/Tube Downloader", fileName);
 
         final DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
