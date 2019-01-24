@@ -1,0 +1,37 @@
+<resources>
+
+    <!-- Base application theme. -->
+    <style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <!-- Customize your theme here. -->
+        <item name="colorPrimary">@color/colorPrimary</item>
+        <item name="colorPrimaryDark">@color/colorPrimaryDark</item>
+        <item name="colorAccent">@color/colorAccent</item>
+        <item name="android:textColorPrimary">@android:color/black</item>
+
+    </style>
+
+    <style name="SplashTheme" parent="@android:style/Theme.Light.NoTitleBar">
+        <item name="android:windowBackground">@drawable/splash_img</item>
+        <item name="android:windowNoTitle">true</item>
+    </style>
+    <style name="Toolbar.TitleText" parent="TextAppearance.Widget.AppCompat.Toolbar.Title">
+        <item name="android:textSize">18dp</item>
+    </style>
+
+    <style name="loading_dialog_style" parent="@android:style/Theme.Dialog">
+        <!-- 다이얼로그 타이틀 사용 안함 -->
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:windowTitleStyle">@null</item>
+
+        <!-- 다이얼 로그 의 틀 사용 안함-->
+        <item name="android:windowFrame">@null</item>
+        <!-- 애니메이션 스타일은 다이얼 로그 기본 값 사용-->
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+
+        <!-- 중요 : 다이얼 로그의 배경 투명하게 설정-->
+        <item name="android:windowBackground">@android:color/transparent</item>
+        <!-- 다이얼로그 표시될때 뒷 배경 반투명 처리를 사용 안함 (뒷화면 전체를 의미)-->
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+</resources>

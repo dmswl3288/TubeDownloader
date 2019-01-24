@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:orientation="vertical"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <android.support.v7.widget.Toolbar
+        android:id="@+id/toolbar"
+        android:layout_width="match_parent"
+        android:layout_height="50dp"
+        android:layout_alignParentTop="true"
+        android:background="@color/colorPrimary"
+        android:theme="@style/ThemeOverlay.AppCompat.Light"
+        android:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+        app:titleTextAppearance="@style/Toolbar.TitleText"/>
+
+    <LinearLayout
+        android:layout_width="300dip"
+        android:layout_height="200dip"
+        android:layout_gravity="center_horizontal">
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+            <ImageView
+                android:id="@+id/previewImg"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+
+            <ImageButton
+                android:id="@+id/playButton"
+                android:background="@drawable/play_button"
+                android:layout_width="70dip"
+                android:layout_height="70dip"
+                android:layout_gravity="center" />
+
+        </FrameLayout>
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="90dip"
+        android:orientation="vertical"
+        android:layout_marginLeft="20dip"
+        android:layout_marginTop="10dip"
+        android:layout_marginRight="20dip">
+
+        <TextView
+            android:text="dkfjdfjdf"
+            android:id="@+id/previewTitle"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="18dip"
+            android:textColor="@color/title"/>
+
+        <TextView
+            android:text="dkfjdfjdf"
+            android:id="@+id/previewDate"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_marginTop="5dip"
+            android:textSize="15dip"/>
+    </LinearLayout>
+
+    <LinearLayout
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <Button
+            android:id="@+id/mp3download"
+            android:layout_marginTop="15dip"
+            android:background="@color/buttonColor"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="300dip"
+            android:layout_height="70dip"
+            android:textSize="15dp"
+            android:textColor="@color/colorPrimary"
+            android:text="MP3 AUDIO DOWNLOAD"/>
+
+        <Button
+            android:id="@+id/mp4download"
+            android:background="@color/buttonColor"
+            android:layout_gravity="center_horizontal"
+            android:layout_width="300dip"
+            android:layout_height="70dip"
+            android:textSize="15dp"
+            android:textColor="@color/colorPrimary"
+            android:layout_marginTop="20dip"
+            android:text="MP4 VIDEO DOWNLOAD"/>
+    </LinearLayout>
+
+</LinearLayout>
