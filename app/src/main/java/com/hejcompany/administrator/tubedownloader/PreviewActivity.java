@@ -235,7 +235,7 @@ public class PreviewActivity extends AppCompatActivity {
 
     // Downloading youtubeUrl
     private void downloadFromUrl(String youtubeDlUrl, String downloadTitle, String fileName) {
-        File filePath = new File(Environment.getExternalStorageDirectory() + "/Tube Downloader");
+        File filePath = new File(Environment.getExternalStorageDirectory() + "/Tube Downloader");  // 폴더 추가
 
         if(!filePath.exists()){
             filePath.mkdirs();   // 폴더가 없다면 생성
