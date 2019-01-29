@@ -16,15 +16,24 @@ import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.util.SparseArray;
+import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import org.cmc.music.common.ID3WriteException;
+import org.cmc.music.metadata.IMusicMetadata;
+import org.cmc.music.metadata.MusicMetadata;
+import org.cmc.music.metadata.MusicMetadataSet;
+import org.cmc.music.myid3.MyID3;
+
 import java.io.File;
+import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 
@@ -55,6 +64,8 @@ public class PreviewActivity extends AppCompatActivity {
 
     String videoID = "";
     String previewUrl;
+
+    String _artist;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -143,15 +154,23 @@ public class PreviewActivity extends AppCompatActivity {
     // dialog EditText 이름 변경 창 띄우기
     void dialogShow(){
 
-        final EditText edittext = new EditText(this);
+        LayoutInflater inflater = getLayoutInflater();
+        View dialoglayout = inflater.inflate(R.layout.dialog, null);
+
+        final EditText songTitle = (EditText) dialoglayout.findViewById(R.id.songtitle);
+        final EditText artist = (EditText) dialoglayout.findViewById(R.id.artist);
 
         // 기본 설정으로 본래 타이틀 제목 가져오기
-        edittext.setText(previewTitle.getText().toString());
+        songTitle.setText(previewTitle.getText().toString(), TextView.BufferType.EDITABLE);
+        artist.setText("", TextView.BufferType.EDITABLE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setView(dialoglayout);
+
+        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("이름변경");
         builder.setMessage("파일이름을 변경해 보세요");
-        builder.setView(edittext);
+        builder.setView(edittext);*/
         builder.setPositiveButton("다운로드",
                 new DialogInterface.OnClickListener() {
                     @SuppressLint("StaticFieldLeak")
@@ -159,6 +178,8 @@ public class PreviewActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int which) {
                           // mp3다운로드 버튼 누르고 이름 변경후 다운로드시 실행
                         Toast.makeText(getApplicationContext(), "다운로드중 입니다.", Toast.LENGTH_LONG).show();
+
+                        _artist = artist.getText().toString();  // 아티스트 이름 가져와서 저장
                         new YouTubeExtractor(getApplicationContext()) {
 
                             @Override
@@ -184,7 +205,7 @@ public class PreviewActivity extends AppCompatActivity {
                                                 Log.d("DL Link", "Number Index : " + i); // i==6
                                                 Log.d("DL LINK", "itag :" + itag);    // .m4a    itag == 140
                                                 //getYoutubeDownloadUrl(vMeta.getTitle(), ytFile); // 함수호출
-                                                getYoutubeDownloadUrl(edittext.getText().toString(), ytFile); // 함수호출
+                                                getYoutubeDownloadUrl(songTitle.getText().toString(), ytFile); // 함수호출
                                                 break;
                                             }
                                         }
@@ -195,7 +216,7 @@ public class PreviewActivity extends AppCompatActivity {
                                             if(ytFile.getFormat().getAudioBitrate() != -1) {   // AudioBitrate()가 -1이면 소리 X
                                                 Log.d("DL Link", "Number Index : " + i); // i==1
                                                 Log.d("DL LINK", "itag :" + itag);    // .mp4   itag == 18
-                                                getYoutubeDownloadUrl(edittext.getText().toString(), ytFile); // 함수호출
+                                                getYoutubeDownloadUrl(songTitle.getText().toString(), ytFile); // 함수호출
                                                 break;
                                             }
                                         }
@@ -205,12 +226,12 @@ public class PreviewActivity extends AppCompatActivity {
                         }.extract(youtubeLink, true, false);
                     }
                 });
-        builder.setNegativeButton("취소",
-                new DialogInterface.OnClickListener() {
-                    @Override
-                    public void onClick(DialogInterface dialog, int which) {
+                builder.setNegativeButton("취소",
+                        new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
 
-                    }
+                        }
                 });
         builder.show();
     }
@@ -237,6 +258,9 @@ public class PreviewActivity extends AppCompatActivity {
     private void downloadFromUrl(String youtubeDlUrl, String downloadTitle, String fileName) {
         File filePath = new File(Environment.getExternalStorageDirectory() + "/Tube Downloader");  // 폴더 추가
 
+        //File pathdata = new File(Environment.getExternalStorageDirectory() + "/Tube Downloader/");
+        //editMetadata();
+
         if(!filePath.exists()){
             filePath.mkdirs();   // 폴더가 없다면 생성
         }
@@ -254,5 +278,51 @@ public class PreviewActivity extends AppCompatActivity {
 
         final DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
+    }
+
+    public void editMetadata(String pathdata){
+
+        File src = new File(pathdata);
+        MusicMetadataSet src_set = null;
+        try {
+            src_set = new MyID3().read(src);
+        } catch (IOException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        } // read metadata
+
+        if (src_set == null) // perhaps no metadata
+        {
+            Log.i("NULL", "NULL");
+        }
+        else
+        {
+            try{  // 정보 가져오기
+                /*IMusicMetadata metadata = src_set.getSimplified();
+                String artist = metadata.getArtist();
+                String album = metadata.getAlbum();
+                String song_title = metadata.getSongTitle();
+                Number track_number = metadata.getTrackNumber();
+                Log.i("artist", artist);
+                Log.i("album", album); */
+            }catch (Exception e) {
+                e.printStackTrace();
+            }
+            File dst = new File(pathdata);
+            MusicMetadata meta = new MusicMetadata("name");
+            meta.setArtist(_artist);
+            try {
+                new MyID3().write(src, dst, src_set, meta);
+            } catch (UnsupportedEncodingException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (ID3WriteException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            } catch (IOException e) {
+                // TODO Auto-generated catch block
+                e.printStackTrace();
+            }  // write updated metadata
+        }
     }
 }

@@ -33,4 +33,5 @@ dependencies {
     androidTestImplementation 'com.android.support.test.espresso:espresso-core:3.0.2'
     compile 'com.github.HaarigerHarald:android-youtubeExtractor:master-SNAPSHOT'
     implementation project(':YouTubeAndroidPlayerApi')
+    implementation project(':MyID3_for_Android')
 }
