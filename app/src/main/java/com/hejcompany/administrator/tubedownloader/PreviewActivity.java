@@ -3,13 +3,16 @@ package com.hejcompany.administrator.tubedownloader;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.DownloadManager;
+import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -154,6 +157,9 @@ public class PreviewActivity extends AppCompatActivity {
     // dialog EditText 이름 변경 창 띄우기
     void dialogShow(){
 
+        String pathdata ="/storage/emulated/0/Tube Downloader/Snowman.m4a";
+        editMetadata(pathdata);
+
         LayoutInflater inflater = getLayoutInflater();
         View dialoglayout = inflater.inflate(R.layout.dialog, null);
 
@@ -258,9 +264,6 @@ public class PreviewActivity extends AppCompatActivity {
     private void downloadFromUrl(String youtubeDlUrl, String downloadTitle, String fileName) {
         File filePath = new File(Environment.getExternalStorageDirectory() + "/Tube Downloader");  // 폴더 추가
 
-        //File pathdata = new File(Environment.getExternalStorageDirectory() + "/Tube Downloader/");
-        //editMetadata();
-
         if(!filePath.exists()){
             filePath.mkdirs();   // 폴더가 없다면 생성
         }
@@ -278,6 +281,36 @@ public class PreviewActivity extends AppCompatActivity {
 
         final DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
+
+        String pathdata = filePath +"/"+ fileName;
+
+        Log.d("DL LINK", "pathdata :" + pathdata);
+        RegisterDownloadManagerReciever(this, pathdata);  // pathdata 인자로 보내기
+
+    }
+
+    // download가 완료 되었는지 확인 후 metadata 변경
+    public void RegisterDownloadManagerReciever(Context context, final String pathdata) {
+        BroadcastReceiver receiver = new BroadcastReceiver() {
+            @Override
+            public void onReceive(Context context, Intent intent) {
+                String action = intent.getAction();
+                if (DownloadManager.ACTION_DOWNLOAD_COMPLETE.equals(action)) {
+                    // Do something on download complete
+
+                    new Handler().postDelayed(new Runnable(){
+                        @Override
+                        public void run(){
+                            Log.d("DL LINK", "Call edit Metadata");
+                            editMetadata(pathdata);
+                        }
+
+                    }, 3000);    //3초 뒤에
+                }
+            }
+        };
+        context.registerReceiver(receiver, new IntentFilter(
+                DownloadManager.ACTION_DOWNLOAD_COMPLETE));
     }
 
     public void editMetadata(String pathdata){
@@ -285,32 +318,35 @@ public class PreviewActivity extends AppCompatActivity {
         File src = new File(pathdata);
         MusicMetadataSet src_set = null;
         try {
+            Log.d("DL LINK", "new MyID3().read()");
             src_set = new MyID3().read(src);
         } catch (IOException e1) {
             // TODO Auto-generated catch block
+            Log.d("DL LINK", "MyID3().read() error");
             e1.printStackTrace();
         } // read metadata
 
         if (src_set == null) // perhaps no metadata
         {
-            Log.i("NULL", "NULL");
+            Log.i("NULL", "Empty");
         }
         else
         {
             try{  // 정보 가져오기
-                /*IMusicMetadata metadata = src_set.getSimplified();
+                IMusicMetadata metadata = src_set.getSimplified();
                 String artist = metadata.getArtist();
                 String album = metadata.getAlbum();
                 String song_title = metadata.getSongTitle();
-                Number track_number = metadata.getTrackNumber();
-                Log.i("artist", artist);
-                Log.i("album", album); */
+                //Number track_number = metadata.getTrackNumber();
+                Log.i("get song Title", song_title);
+                Log.i("get artist", artist);
             }catch (Exception e) {
                 e.printStackTrace();
             }
             File dst = new File(pathdata);
             MusicMetadata meta = new MusicMetadata("name");
-            meta.setArtist(_artist);
+            meta.setArtist(_artist);     // 아티스트명 변경
+            Log.d("set Artist: ", _artist);
             try {
                 new MyID3().write(src, dst, src_set, meta);
             } catch (UnsupportedEncodingException e) {
