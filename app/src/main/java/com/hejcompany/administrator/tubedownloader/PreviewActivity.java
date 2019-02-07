@@ -157,13 +157,11 @@ public class PreviewActivity extends AppCompatActivity {
     // dialog EditText 이름 변경 창 띄우기
     void dialogShow(){
 
-        String pathdata ="/storage/emulated/0/Tube Downloader/Snowman.m4a";
-        editMetadata(pathdata);
-
         LayoutInflater inflater = getLayoutInflater();
         View dialoglayout = inflater.inflate(R.layout.dialog, null);
 
         final EditText songTitle = (EditText) dialoglayout.findViewById(R.id.songtitle);
+        // 아티스트 제거하기
         final EditText artist = (EditText) dialoglayout.findViewById(R.id.artist);
 
         // 기본 설정으로 본래 타이틀 제목 가져오기
@@ -282,15 +280,15 @@ public class PreviewActivity extends AppCompatActivity {
         final DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
 
-        String pathdata = filePath +"/"+ fileName;
+        /*String pathdata = filePath +"/"+ "Siren(사이렌).mp3";
 
         Log.d("DL LINK", "pathdata :" + pathdata);
-        RegisterDownloadManagerReciever(this, pathdata);  // pathdata 인자로 보내기
+        RegisterDownloadManagerReciever(this, pathdata);  // pathdata 인자로 보내기 */
 
     }
 
     // download가 완료 되었는지 확인 후 metadata 변경
-    public void RegisterDownloadManagerReciever(Context context, final String pathdata) {
+    /*public void RegisterDownloadManagerReciever(Context context, final String pathdata) {
         BroadcastReceiver receiver = new BroadcastReceiver() {
             @Override
             public void onReceive(Context context, Intent intent) {
@@ -348,7 +346,7 @@ public class PreviewActivity extends AppCompatActivity {
             meta.setArtist(_artist);     // 아티스트명 변경
             Log.d("set Artist: ", _artist);
             try {
-                new MyID3().write(src, dst, src_set, meta);
+                new MyID3().update(src, src_set, meta);
             } catch (UnsupportedEncodingException e) {
                 // TODO Auto-generated catch block
                 e.printStackTrace();
@@ -360,5 +358,5 @@ public class PreviewActivity extends AppCompatActivity {
                 e.printStackTrace();
             }  // write updated metadata
         }
-    }
+    }*/
 }
