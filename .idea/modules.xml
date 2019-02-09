@@ -2,10 +2,10 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/MyID3_for_Android/MyID3_for_Android.iml" filepath="$PROJECT_DIR$/MyID3_for_Android/MyID3_for_Android.iml" />
       <module fileurl="file://$PROJECT_DIR$/TubeDownloader.iml" filepath="$PROJECT_DIR$/TubeDownloader.iml" />
       <module fileurl="file://$PROJECT_DIR$/YouTubeAndroidPlayerApi/YouTubeAndroidPlayerApi.iml" filepath="$PROJECT_DIR$/YouTubeAndroidPlayerApi/YouTubeAndroidPlayerApi.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/jaudiotagger-2.2.6-SNAPSHOT/jaudiotagger-2.2.6-SNAPSHOT.iml" filepath="$PROJECT_DIR$/jaudiotagger-2.2.6-SNAPSHOT/jaudiotagger-2.2.6-SNAPSHOT.iml" />
     </modules>
   </component>
 </project>

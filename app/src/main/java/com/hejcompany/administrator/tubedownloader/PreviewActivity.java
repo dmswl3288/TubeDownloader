@@ -29,11 +29,15 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
-import org.cmc.music.common.ID3WriteException;
-import org.cmc.music.metadata.IMusicMetadata;
-import org.cmc.music.metadata.MusicMetadata;
-import org.cmc.music.metadata.MusicMetadataSet;
-import org.cmc.music.myid3.MyID3;
+import org.jaudiotagger.audio.AudioFileIO;
+import org.jaudiotagger.audio.exceptions.CannotReadException;
+import org.jaudiotagger.audio.exceptions.InvalidAudioFrameException;
+import org.jaudiotagger.audio.exceptions.ReadOnlyFileException;
+import org.jaudiotagger.audio.mp3.MP3File;
+import org.jaudiotagger.tag.FieldKey;
+import org.jaudiotagger.tag.Tag;
+import org.jaudiotagger.tag.TagException;
+import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
 
 import java.io.File;
 import java.io.IOException;
@@ -280,7 +284,7 @@ public class PreviewActivity extends AppCompatActivity {
         final DownloadManager manager = (DownloadManager) getSystemService(Context.DOWNLOAD_SERVICE);
         manager.enqueue(request);
 
-        /*String pathdata = filePath +"/"+ "Siren(사이렌).mp3";
+        /* String pathdata = filePath +"/"+ "Trying to Be Cool.mp3";
 
         Log.d("DL LINK", "pathdata :" + pathdata);
         RegisterDownloadManagerReciever(this, pathdata);  // pathdata 인자로 보내기 */
@@ -300,7 +304,33 @@ public class PreviewActivity extends AppCompatActivity {
                         @Override
                         public void run(){
                             Log.d("DL LINK", "Call edit Metadata");
-                            editMetadata(pathdata);
+                            //editMetadata(pathdata);
+                            String decoding = "ISO-8859-1";
+                            String encoding = "EUC-KR";
+                            File file = new File(pathdata);
+                            Tag tag = null;
+                            try {
+                                MP3File mp3 = null;
+                                try {
+                                    mp3 = (MP3File) AudioFileIO.read(file);
+                                } catch (CannotReadException e) {
+                                    e.printStackTrace();
+                                } catch (TagException e) {
+                                    e.printStackTrace();
+                                } catch (ReadOnlyFileException e) {
+                                    e.printStackTrace();
+                                } catch (InvalidAudioFrameException e) {
+                                    e.printStackTrace();
+                                }
+                                AbstractID3v2Tag tag2 = mp3.getID3v2Tag();
+
+                                tag = mp3.getTag();
+                                //Log.d("Tag : " , String.valueOf(tag2));
+                                Log.d("Title : " , tag.getFirst(FieldKey.TITLE));
+                                Log.d("Artist : " , tag.getFirst(FieldKey.ARTIST));
+                            }catch (IOException e){
+                                e.printStackTrace();
+                            }
                         }
 
                     }, 3000);    //3초 뒤에
@@ -309,8 +339,9 @@ public class PreviewActivity extends AppCompatActivity {
         };
         context.registerReceiver(receiver, new IntentFilter(
                 DownloadManager.ACTION_DOWNLOAD_COMPLETE));
-    }
+    }*/
 
+    /*
     public void editMetadata(String pathdata){
 
         File src = new File(pathdata);
