@@ -40,21 +40,4 @@
         android:hint="song title"
         android:layout_height="wrap_content"/>
 
-    <TextView
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:text="Artist"
-        android:textSize="20dp"
-        android:textColor="#000"
-        android:layout_marginLeft="20dp"
-        android:paddingTop="10dp"
-        />
-    <EditText
-        android:id="@+id/artist"
-        android:paddingLeft="5dp"
-        android:hint="artist"
-        android:layout_gravity="center"
-        android:layout_width="300dp"
-        android:layout_height="wrap_content"/>
-
 </LinearLayout>

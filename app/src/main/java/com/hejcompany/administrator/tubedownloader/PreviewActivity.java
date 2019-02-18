@@ -38,6 +38,7 @@ import org.jaudiotagger.tag.FieldKey;
 import org.jaudiotagger.tag.Tag;
 import org.jaudiotagger.tag.TagException;
 import org.jaudiotagger.tag.id3.AbstractID3v2Tag;
+import org.w3c.dom.Text;
 
 import java.io.File;
 import java.io.IOException;
@@ -65,6 +66,7 @@ public class PreviewActivity extends AppCompatActivity {
     ImageButton playButton;
     TextView previewTitle;
     TextView previewDate;
+    TextView previewDuration;
 
     Button mp3DownloadBtn;
     Button mp4DownloadBtn;
@@ -97,6 +99,7 @@ public class PreviewActivity extends AppCompatActivity {
         playButton = (ImageButton) findViewById(R.id.playButton);   // play Button
         previewTitle =  (TextView) findViewById(R.id.previewTitle);
         previewDate = (TextView) findViewById(R.id.previewDate);
+        previewDuration = (TextView) findViewById(R.id.previewDuration); // Duration
 
         mp3DownloadBtn = (Button) findViewById(R.id.mp3download);   // mp3 Download Button
         mp4DownloadBtn = (Button) findViewById(R.id.mp4download);
@@ -106,6 +109,7 @@ public class PreviewActivity extends AppCompatActivity {
         previewUrl = gt.getStringExtra("previewItemUrl");   // Url 가져오기
         previewTitle.setText(gt.getStringExtra("previewItemTitle"));  // title
         previewDate.setText(gt.getStringExtra("previewItemDate"));    // Date
+        previewDuration.setText(gt.getStringExtra("previewItemDuration")); // Duration
 
         videoID = gt.getStringExtra("previewVideoID");  // videoID 가져오기
 
@@ -161,24 +165,25 @@ public class PreviewActivity extends AppCompatActivity {
     // dialog EditText 이름 변경 창 띄우기
     void dialogShow(){
 
+        /* -- Title
+              ______________
+           -- Artist
+              ______________
+        */
+
         LayoutInflater inflater = getLayoutInflater();
         View dialoglayout = inflater.inflate(R.layout.dialog, null);
 
         final EditText songTitle = (EditText) dialoglayout.findViewById(R.id.songtitle);
-        // 아티스트 제거하기
-        final EditText artist = (EditText) dialoglayout.findViewById(R.id.artist);
+        // 2019-02-18 아티스트 제거
+       // final EditText artist = (EditText) dialoglayout.findViewById(R.id.artist);
 
         // 기본 설정으로 본래 타이틀 제목 가져오기
         songTitle.setText(previewTitle.getText().toString(), TextView.BufferType.EDITABLE);
-        artist.setText("", TextView.BufferType.EDITABLE);
+        //artist.setText("", TextView.BufferType.EDITABLE);
 
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setView(dialoglayout);
-
-        /*AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("이름변경");
-        builder.setMessage("파일이름을 변경해 보세요");
-        builder.setView(edittext);*/
         builder.setPositiveButton("다운로드",
                 new DialogInterface.OnClickListener() {
                     @SuppressLint("StaticFieldLeak")
@@ -187,7 +192,7 @@ public class PreviewActivity extends AppCompatActivity {
                           // mp3다운로드 버튼 누르고 이름 변경후 다운로드시 실행
                         Toast.makeText(getApplicationContext(), "다운로드중 입니다.", Toast.LENGTH_LONG).show();
 
-                        _artist = artist.getText().toString();  // 아티스트 이름 가져와서 저장
+                       // _artist = artist.getText().toString();  // 아티스트 이름 가져와서 저장
                         new YouTubeExtractor(getApplicationContext()) {
 
                             @Override

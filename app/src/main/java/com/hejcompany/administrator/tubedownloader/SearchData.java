@@ -9,15 +9,17 @@ public class SearchData {
     String title;
     String url;
     String publishedAt;
+    String duration;
 
     // 생성자
-    public SearchData(String videoID, String title, String url, String publishedAt)
+    public SearchData(String videoID, String title, String url, String publishedAt, String duration)
     {
         super();
         this.videoID = videoID;
         this.title = title;
         this.url = url;
         this.publishedAt = publishedAt;
+        this.duration = duration;
     }
 
     public String getVideoID()
@@ -59,4 +61,8 @@ public class SearchData {
     {
         this.publishedAt = publishedAt;
     }
+
+    public String getDuration() { return duration; }  // 2019-02-18 동영상 길이 추가
+
+    public void setDuration(String duration) { this.duration = duration; }
 }

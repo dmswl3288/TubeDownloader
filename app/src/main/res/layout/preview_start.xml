@@ -62,6 +62,13 @@
             android:layout_height="wrap_content"
             android:layout_marginTop="5dip"
             android:textSize="15dip"/>
+
+        <TextView
+            android:text="10:35"
+            android:id="@+id/previewDuration"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:textSize="15dip"/>
     </LinearLayout>
 
     <LinearLayout

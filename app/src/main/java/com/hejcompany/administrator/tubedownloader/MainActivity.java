@@ -133,15 +133,11 @@ public class MainActivity extends AppCompatActivity {
     // 검색 버튼 클릭시 실행되는 클래스
     private class searchTask extends AsyncTask<Void, Void, Void> {
 
-        // ProgressDialog progressDialog = new ProgressDialog(MainActivity.this);
-
         @Override
         protected void onPreExecute() {
-            // progressDialog.setProgressStyle(ProgressDialog.STYLE_SPINNER);
-            // progressDialog.setMessage("로딩중입니다...");
 
+            // show Dialog
             showCustomDialog();
-            //progressDialog.show();  // show Dialog
             super.onPreExecute();
         }
 
@@ -260,15 +256,19 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
+            // 동영상 길이
+            String duration = "";
+
             // 등록날짜
             String date = c.getJSONObject("snippet").getString("publishedAt").substring(0, 10); // 등록날짜
             date = date.replace('-','.');  // 2018-02-04를 2018.02.04로 대체
+
             //썸내일 이미지 URL값
             String imgUrl = c.getJSONObject("snippet").getJSONObject("thumbnails").getJSONObject("medium").getString("url"); // 썸내일 이미지 URL값
             Log.d("Youtube", "제목 : " + title);
 
             // 받아온 비디오id값 추가
-            sData.add(new SearchData(vodid, changString, imgUrl, date));
+            sData.add(new SearchData(vodid, changString, imgUrl, date, duration));
 
         }
     }
@@ -326,6 +326,7 @@ public class MainActivity extends AppCompatActivity {
                     intent.putExtra("previewItemUrl",items.get(pos).getUrl());  // (이미지) url
                     intent.putExtra("previewItemTitle", items.get(pos).getTitle());  // 타이틀 보내기
                     intent.putExtra("previewItemDate", items.get(pos).getPublishedAt());  // date 보내기
+                    intent.putExtra("previewItemDuration", items.get(pos).getDuration()); // duration 보내기
                     intent.putExtra("previewVideoID", items.get(pos).getVideoID());  // videoID 보내기
 
                     startActivity(intent);
@@ -334,6 +335,7 @@ public class MainActivity extends AppCompatActivity {
 
             ((TextView) v.findViewById(R.id.title)).setText(fInfo.getTitle());       // Set title
             ((TextView) v.findViewById(R.id.date)).setText(fInfo.getPublishedAt());  // Set date
+            ((TextView) v.findViewById(R.id.duration)).setText(fInfo.getDuration()); // Set duration
             return v;
         }
     }
