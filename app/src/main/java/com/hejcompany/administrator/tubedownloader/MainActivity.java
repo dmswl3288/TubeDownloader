@@ -316,23 +316,27 @@ public class MainActivity extends AppCompatActivity {
                 @Override
                 public void onClick(View v) {
                     int pos = (Integer) v.getTag();  // 선택된 인덱스 값 가져오기
-                    /*Intent intent = new Intent(MainActivity.this, StartActivity.class);
-                    intent.putExtra("id", items.get(pos).getVideoID());
-                    */
-                    //리스트 터치시 재생하는 엑티비티로 이동합니다. 동영상 아이디를 넘겨줍니다..
-                    // startActivity(intent);
+
+                    String _id = items.get(pos).getVideoID();
+                    String _duration = new GetDuration(_id, serverKey).duration;
                     // 여기서 동영상 재생하지 않고 동영상 정보 나타내주는 클래스(PreviewActivity.class)로 이동하기
+                    // 선택된 현재 동영상 길이를 가져오기 위해 현재 id 값 보내기
+
+                    Log.d("duration String: ", _duration);
+
                     Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
-                    intent.putExtra("previewItemUrl",items.get(pos).getUrl());  // (이미지) url
+                    intent.putExtra("previewItemDuration", _duration); // duration 보내기
+                    intent.putExtra("previewItemUrl", items.get(pos).getUrl());  // (이미지) url
                     intent.putExtra("previewItemTitle", items.get(pos).getTitle());  // 타이틀 보내기
                     intent.putExtra("previewItemDate", items.get(pos).getPublishedAt());  // date 보내기
-                    intent.putExtra("previewItemDuration", items.get(pos).getDuration()); // duration 보내기
                     intent.putExtra("previewVideoID", items.get(pos).getVideoID());  // videoID 보내기
 
                     startActivity(intent);
                 }
+
             });
 
+            // ListView
             ((TextView) v.findViewById(R.id.title)).setText(fInfo.getTitle());       // Set title
             ((TextView) v.findViewById(R.id.date)).setText(fInfo.getPublishedAt());  // Set date
             ((TextView) v.findViewById(R.id.duration)).setText(fInfo.getDuration()); // Set duration
