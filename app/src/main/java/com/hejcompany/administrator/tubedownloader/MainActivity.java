@@ -9,6 +9,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.SearchView;
 import android.support.v7.widget.Toolbar;
+import android.text.TextUtils;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -38,6 +39,10 @@ import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
 
+    // duration of video
+    public String duration = "";
+    public String _url, _title, _publishedAt, _id;
+
     //  Dialog dialog;
     CustomCircleProgressDialog ccpd;
 
@@ -54,12 +59,7 @@ public class MainActivity extends AppCompatActivity {
         ccpd.setCancelable(false); // 주변 클릭 터치시 프로그래서 사라지지 않게 하기.
 
         ccpd.show();
-        // dialog = new Dialog(MainActivity.this, R.style.loading_dialog_style);
-        //  ProgressBar pb = new ProgressBar(MainActivity.this);
-        //  pb.getIndeterminateDrawable().setColorFilter(Color.parseColor("#bb0000"), android.graphics.PorterDuff.Mode.SRC_IN);
-        // dialog.addContentView(pb, new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.WRAP_CONTENT));
 
-        // dialog.show();
     }
 
     void dismissCustomDialog(){
@@ -256,9 +256,6 @@ public class MainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
 
-            // 동영상 길이
-            String duration = "";
-
             // 등록날짜
             String date = c.getJSONObject("snippet").getString("publishedAt").substring(0, 10); // 등록날짜
             date = date.replace('-','.');  // 2018-02-04를 2018.02.04로 대체
@@ -317,30 +314,168 @@ public class MainActivity extends AppCompatActivity {
                 public void onClick(View v) {
                     int pos = (Integer) v.getTag();  // 선택된 인덱스 값 가져오기
 
-                    String _id = items.get(pos).getVideoID();
-                    String _duration = new GetDuration(_id, serverKey).duration;
-                    // 여기서 동영상 재생하지 않고 동영상 정보 나타내주는 클래스(PreviewActivity.class)로 이동하기
-                    // 선택된 현재 동영상 길이를 가져오기 위해 현재 id 값 보내기
+                    _id = items.get(pos).getVideoID();
+                    _url = items.get(pos).getUrl();
+                    _title = items.get(pos).getTitle();
+                    _publishedAt = items.get(pos).getPublishedAt();
 
-                    Log.d("duration String: ", _duration);
-
-                    Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
-                    intent.putExtra("previewItemDuration", _duration); // duration 보내기
-                    intent.putExtra("previewItemUrl", items.get(pos).getUrl());  // (이미지) url
-                    intent.putExtra("previewItemTitle", items.get(pos).getTitle());  // 타이틀 보내기
-                    intent.putExtra("previewItemDate", items.get(pos).getPublishedAt());  // date 보내기
-                    intent.putExtra("previewVideoID", items.get(pos).getVideoID());  // videoID 보내기
-
-                    startActivity(intent);
+                    // searchDuration class 안에서 new Intent(MainActivity.this, PreviewActivity.class);
+                    // putExtra(); 실행
+                    new searchDuration().execute();
                 }
-
             });
 
             // ListView
             ((TextView) v.findViewById(R.id.title)).setText(fInfo.getTitle());       // Set title
             ((TextView) v.findViewById(R.id.date)).setText(fInfo.getPublishedAt());  // Set date
-            ((TextView) v.findViewById(R.id.duration)).setText(fInfo.getDuration()); // Set duration
             return v;
+        }
+    }
+
+    private class searchDuration extends AsyncTask<Void, Void, Void> {
+
+        @Override
+        protected void onPreExecute() {
+            // show Dialog
+            super.onPreExecute();
+        }
+
+        @Override
+        protected Void doInBackground(Void... params) {
+            try {
+                getDurationItem();
+
+            } catch (JSONException e) {
+
+                e.printStackTrace();
+            }
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void result) {
+
+            Log.d("POST EXE: ", "finish");
+            this.cancel(true);
+        }
+    }
+
+    public void getDurationItem() throws JSONException {
+
+        JSONObject contentDetailsObject = getVideoDuration();
+        JSONArray items = contentDetailsObject.getJSONArray("items");
+
+        for (int j = 0; j < items.length(); j++) {
+            JSONObject d = items.getJSONObject(j);
+            // 동영상 길이 duration
+            duration = d.getJSONObject("contentDetails").getString("duration");
+        }
+
+        Log.d("DURATION TIME: ", duration);
+
+        String time = convertDuration(duration);
+
+        Log.d("duration String: ", time);
+
+        Intent intent = new Intent(MainActivity.this, PreviewActivity.class);
+        intent.putExtra("previewItemDuration", time); // duration 보내기
+        intent.putExtra("previewItemUrl", _url);  // (이미지) url
+        intent.putExtra("previewItemTitle", _title);  // 타이틀 보내기
+        intent.putExtra("previewItemDate", _publishedAt);  // date 보내기
+        intent.putExtra("previewVideoID", _id);  // videoID 보내기
+
+        startActivity(intent);
+
+    }
+    public JSONObject getVideoDuration() {
+
+        HttpGet httpGet = new HttpGet("https://www.googleapis.com/youtube/v3/videos?"
+                + "id=" + _id
+                + "&key="+ serverKey + "&part=contentDetails" + "&maxResults=50");  //EditText에 입력된 값으로 겁색을 합니다. 공백이 없어야 검색됨
+
+        // part(snippet), q(검색값) , key(서버키)
+        HttpClient client = new DefaultHttpClient();
+        HttpResponse response;
+        StringBuilder stringBuilder = new StringBuilder();
+
+        try {
+
+            response = client.execute(httpGet);
+            HttpEntity entity = response.getEntity();
+            InputStream stream = entity.getContent();
+            int b;
+            while ((b = stream.read()) != -1) {
+                stringBuilder.append((char) b);
+            }
+
+        } catch (ClientProtocolException e) {
+        } catch (IOException e) {
+        }
+
+        JSONObject jsonObject = new JSONObject();
+        try {
+            jsonObject = new JSONObject(stringBuilder.toString());
+        } catch (JSONException e) {
+
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        return jsonObject;
+    }
+
+    // PT1H9M24S -->  1:09:24
+    // PT2H1S"   -->  2:00:01
+    // PT23M2S   -->  23:02
+    // PT31S     -->  0:31
+
+    public String convertDuration(String duration) {
+        duration = duration.substring(2);  // del. PT-symbols
+        String H, M, S;
+        // Get Hours:
+        int indOfH = duration.indexOf("H");  // position of H-symbol
+        if (indOfH > -1) {  // there is H-symbol
+            H = duration.substring(0,indOfH);      // take number for hours
+            duration = duration.substring(indOfH); // del. hours
+            duration = duration.replace("H","");   // del. H-symbol
+        } else {
+            H = "";
+        }
+        // Get Minutes:
+        int indOfM = duration.indexOf("M");  // position of M-symbol
+        if (indOfM > -1) {  // there is M-symbol
+            M = duration.substring(0,indOfM);      // take number for minutes
+            duration = duration.substring(indOfM); // del. minutes
+            duration = duration.replace("M","");   // del. M-symbol
+            // If there was H-symbol and less than 10 minutes
+            // then add left "0" to the minutes
+            if (H.length() > 0 && M.length() == 1) {
+                M = "0" + M;
+            }
+        } else {
+            // If there was H-symbol then set "00" for the minutes
+            // otherwise set "0"
+            if (H.length() > 0) {
+                M = "00";
+            } else {
+                M = "0";
+            }
+        }
+        // Get Seconds:
+        int indOfS = duration.indexOf("S");  // position of S-symbol
+        if (indOfS > -1) {  // there is S-symbol
+            S = duration.substring(0,indOfS);      // take number for seconds
+            duration = duration.substring(indOfS); // del. seconds
+            duration = duration.replace("S","");   // del. S-symbol
+            if (S.length() == 1) {
+                S = "0" + S;
+            }
+        } else {
+            S = "00";
+        }
+        if (H.length() > 0) {
+            return H + ":" +  M + ":" + S;
+        } else {
+            return M + ":" + S;
         }
     }
 }
