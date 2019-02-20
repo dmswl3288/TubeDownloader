@@ -44,7 +44,8 @@
                 android:textSize="12dip"
                 android:text="10:35"
                 android:layout_gravity="bottom|right"
-                android:padding="3dp"
+                android:paddingLeft="3dp"
+                android:paddingRight="3dp"
                 android:layout_marginRight="5dp"
                 android:layout_marginBottom="20dp"/>
 
